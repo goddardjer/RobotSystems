@@ -4,7 +4,7 @@ import math
 
 try:
     from robot_hat import Pin, ADC, PWM, Servo, fileDB
-    from robot_hat import Grayscale_Module, Ultrasonic
+    from robot_hat import Grayscale_Module, Ultrasonic, utils
     from robot_hat.utils import reset_mcu, run_command
 except ImportError:
     from sim_robot_hat import Pin, ADC, PWM, Servo, fileDB
