@@ -1,5 +1,7 @@
 # Picar-X
 
+## Jeremiah Goddard Intro to Robotics II Personal Repsoitory
+
 Picar-X Python library for Raspberry Pi.
 
 Quick Links:
