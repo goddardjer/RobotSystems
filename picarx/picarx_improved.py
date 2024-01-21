@@ -197,16 +197,17 @@ class Picarx(object):
         self.set_motor_speed(1, speed)
         self.set_motor_speed(2, speed)
 
-    #Chat GPT helped function
-    def ack_steering_aprox(self, angle):
+    # ChatGPT helped Function
+    def ackermann_steering(self, angle):
+        # Distance measured between axels
+        Length = 0.1  # 10 cm
+        # Turning Radius
+        radius = 0.25  # A complete guess
 
-        #distance measured between axels
-        Length = .1 # 10 cm
-        #Turning Radius
-        radius = .25 # A complete guess
-
-        left_speed = math.sin(angle) * (radius + 0.5 * Length * math.cos(angle)) / (radius - 0.5 * Length * math.cos(angle))
-        right_speed = math.sin(angle) * (radius - 0.5 * Length * math.cos(angle)) / (radius + 0.5 * Length * math.cos(angle))
+        left_speed = math.sin(angle) * (radius + 0.5 * Length * math.cos(angle)) / (
+                radius - 0.5 * Length * math.cos(angle))
+        right_speed = math.sin(angle) * (radius - 0.5 * Length * math.cos(angle)) / (
+                radius + 0.5 * Length * math.cos(angle))
 
         return left_speed, right_speed
 
@@ -249,9 +250,9 @@ class Picarx(object):
         # else:
         #     self.set_motor_speed(1, speed)
         #     self.set_motor_speed(2, -1*speed) 
-        left_speed, right_speed = self.ack_steering_aprox(current_angle)
-        self.set_motor_speed(1, -speed * left_speed)
-        self.set_motor_speed(2, -speed * right_speed)                 
+        left_speed, right_speed = self.ackermann_steering(current_angle)
+        self.set_motor_speed(1, speed * left_speed)
+        self.set_motor_speed(2, speed * right_speed)                
 
     def stop(self):
         '''
