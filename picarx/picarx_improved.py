@@ -249,7 +249,7 @@ class Picarx(object):
         # else:
         #     self.set_motor_speed(1, speed)
         #     self.set_motor_speed(2, -1*speed) 
-        left_speed, right_speed = self.ackermann_steering(current_angle)
+        left_speed, right_speed = self.ack_steering_aprox(current_angle)
         self.set_motor_speed(1, -speed * left_speed)
         self.set_motor_speed(2, -speed * right_speed)                 
 
