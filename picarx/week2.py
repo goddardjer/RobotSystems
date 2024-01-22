@@ -1,6 +1,7 @@
 import picarx_improved
 
 def main():
+    car.Picarx()
     user_input = input("Please enter a command (F,B,PL,PR,K): ")
     
     if user_input == 'F':
@@ -8,7 +9,7 @@ def main():
         speed = float(input("Enter speed: "))
         time = float(input("Enter time: "))
         angle = float(input("Enter angle: "))
-        Manuevering_fwd_at_angle(speed, time, angle)
+        car.Manuevering_fwd_at_angle(speed, time, angle)
         print("Forward command executed.")
     
     elif user_input == 'B':
@@ -16,7 +17,7 @@ def main():
         speed = float(input("Enter speed: "))
         time = float(input("Enter time: "))
         angle = float(input("Enter angle: "))
-        Manuevering_back_at_angle(speed, time, angle)
+        car.Manuevering_back_at_angle(speed, time, angle)
         print("Backward command executed.")
     
     elif user_input == 'PL':
