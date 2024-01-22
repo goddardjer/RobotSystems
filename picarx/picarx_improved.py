@@ -314,11 +314,16 @@ class Picarx(object):
         else:
             raise ValueError("grayscale reference must be a 1*3 list")
         
-    def Manuevering_at_angle(self, speed, distance, steering_angle):
+    def Manuevering_fwd_at_angle(self, speed, time, steering_angle):
         self.set_dir_servo_angle(steering_angle)
         self.forward(speed)
-        on_time = distance/speed
-        time.sleep(on_time)
+        time.sleep(time)
+        self.stop
+
+    def Manuevering_back_at_angle(self, speed, tiem, steering_angle):
+        self.set_dir_servo_angle(steering_angle)
+        self.forward(speed)
+        time.sleep(time)
         self.stop
 
     def Parallel_parking_left(self):
