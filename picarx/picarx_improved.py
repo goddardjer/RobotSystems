@@ -202,35 +202,43 @@ class Picarx(object):
         # Distance measured between axels
         Length = 0.1  # 10 cm
         # Turning Radius
-        radius = 0.25  # A complete guess
+        radius = 0.10  # A complete guess
 
-        left_speed = math.sin(angle) * (radius + 0.5 * Length * math.cos(angle)) / (
-                radius - 0.5 * Length * math.cos(angle))
-        right_speed = math.sin(angle) * (radius - 0.5 * Length * math.cos(angle)) / (
-                radius + 0.5 * Length * math.cos(angle))
+        left_speed = math.tan(angle) * (radius + 0.5 * Length / math.cos(angle))
+        right_speed = math.tan(angle) * (radius - 0.5 * Length / math.cos(angle))
 
         return left_speed, right_speed
 
     #Chat GPT helped Function
     def backward(self, speed):
+        # current_angle = self.dir_current_angle
+        # if current_angle != 0:
+        #     abs_current_angle = abs(current_angle)
+        #     if abs_current_angle > self.DIR_MAX:
+        #         abs_current_angle = self.DIR_MAX
+        #     power_scale = (100 - abs_current_angle) / 100.0 
+        #     if (current_angle / abs_current_angle) > 0:
+        #         self.set_motor_speed(1, -1*speed)
+        #         self.set_motor_speed(2, speed * power_scale)
+        #     else:
+        #         self.set_motor_speed(1, -1*speed * power_scale)
+        #         self.set_motor_speed(2, speed )
+        # else:
+        #     self.set_motor_speed(1, -1*speed)
+        #     self.set_motor_speed(2, speed)  
         current_angle = self.dir_current_angle
         if current_angle != 0:
             abs_current_angle = abs(current_angle)
             if abs_current_angle > self.DIR_MAX:
                 abs_current_angle = self.DIR_MAX
-            power_scale = (100 - abs_current_angle) / 100.0 
-            if (current_angle / abs_current_angle) > 0:
-                self.set_motor_speed(1, -1*speed)
-                self.set_motor_speed(2, speed * power_scale)
-            else:
-                self.set_motor_speed(1, -1*speed * power_scale)
-                self.set_motor_speed(2, speed )
+            power_scale = (100 - abs_current_angle) / 100.0
+            left_speed, right_speed = self.ackermann_steering(current_angle)
+            self.set_motor_speed(1, -1 * speed * left_speed * power_scale)
+            self.set_motor_speed(2, speed * right_speed * power_scale)
         else:
-            self.set_motor_speed(1, -1*speed)
-            self.set_motor_speed(2, speed)  
-        # left_speed, right_speed = self.ackermann_steering(current_angle)
-        # self.set_motor_speed(1, speed * left_speed)
-        # self.set_motor_speed(2, speed * right_speed)
+            self.set_motor_speed(1, -1 * speed)
+            self.set_motor_speed(2, speed)
+        
 
 
     #Chat GPT helped Function
@@ -310,6 +318,6 @@ class Picarx(object):
 
 if __name__ == "__main__":
     car = Picarx()
-    car.forward(40)
+    car.backward(50)
     time.sleep(1)
     car.stop()
