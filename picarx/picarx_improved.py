@@ -326,6 +326,7 @@ class Picarx(object):
 
 
 
+
 if __name__ == "__main__":
     car = Picarx()
     car.forward(50)
