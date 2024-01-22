@@ -328,7 +328,5 @@ class Picarx(object):
 
 if __name__ == "__main__":
     car = Picarx()
-    car.backward(50)
-    time.sleep(1)
     car.forward(50)
     car.stop()
