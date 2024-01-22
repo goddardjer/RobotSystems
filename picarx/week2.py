@@ -1,4 +1,4 @@
-import pixcar_improved
+import picarx_improved
 
 def main():
     user_input = input("Please enter a command (F,B,PL,PR,K): ")
