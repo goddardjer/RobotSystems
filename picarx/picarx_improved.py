@@ -310,6 +310,6 @@ class Picarx(object):
 
 if __name__ == "__main__":
     car = Picarx()
-    car.forward(30)
+    car.forward(40)
     time.sleep(1)
     car.stop()
