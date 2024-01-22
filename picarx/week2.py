@@ -1,7 +1,7 @@
 import picarx_improved
 
 def main():
-    car = Picarx()
+    car = picarx_improved.Picarx()
     user_input = input("Please enter a command (F,B,PL,PR,K): ")
     
     if user_input == 'F':
