@@ -126,11 +126,11 @@ class Picarx(object):
         speed = constrain(speed, -100, 100)
         motor -= 1
         direction = self.cali_dir_value[motor]
-        # if speed >= 0:
-        #     direction = 1 * self.cali_dir_value[motor]
-        # elif speed < 0:
-        #     direction = -1 * self.cali_dir_value[motor]
-        # speed = abs(speed)
+        if speed >= 0:
+            direction = 1 * self.cali_dir_value[motor]
+        elif speed < 0:
+            direction = -1 * self.cali_dir_value[motor]
+        speed = abs(speed)
         # if speed != 0:
         #     speed = int(speed /2 ) + 50
         # speed = speed - self.cali_speed_value[motor]
@@ -311,5 +311,5 @@ class Picarx(object):
 if __name__ == "__main__":
     car = Picarx()
     car.forward(50)
-    time.sleep(5)
+    time.sleep(1)
     car.stop()
