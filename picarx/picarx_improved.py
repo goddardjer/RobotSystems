@@ -322,7 +322,7 @@ class Picarx(object):
 
     def Manuevering_back_at_angle(self, speed, duration, steering_angle):
         self.set_dir_servo_angle(steering_angle)
-        self.forward(speed)
+        self.backward(speed)
         time.sleep(duration)
         self.stop()
 
