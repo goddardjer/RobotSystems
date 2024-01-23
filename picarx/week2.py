@@ -37,6 +37,9 @@ def main():
 
         elif user_input == 'K':
             # do something for 'K' command
+            car.Manuevering_fwd_at_angle(100,2,30)
+            car.Manuevering_back_at_angle(100,1,20)
+            car.Manuevering_fwd_at_angle(100,2,-30)
             print("K turn command executed.")
 
         elif user_input == 'E':
