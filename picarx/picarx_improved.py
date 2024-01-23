@@ -204,8 +204,13 @@ class Picarx(object):
         # Turning Radius
         radius = 0.10  # A complete guess
 
-        left_speed = math.tan(angle) * (radius + 0.5 * Length / math.cos(angle))
-        right_speed = math.tan(angle) * (radius - 0.5 * Length / math.cos(angle))
+        # left_speed = math.tan(angle) * (radius + 0.5 * Length / math.cos(angle))
+        # right_speed = math.tan(angle) * (radius - 0.5 * Length / math.cos(angle))
+
+        left_speed = math.sin(angle) * (radius + 0.5 * Length * math.cos(angle)) / (
+                radius - 0.5 * Length * math.cos(angle))
+        right_speed = math.sin(angle) * (radius - 0.5 * Length * math.cos(angle)) / (
+                radius + 0.5 * Length * math.cos(angle))
 
         return left_speed, right_speed
 
