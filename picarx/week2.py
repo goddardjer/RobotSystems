@@ -12,11 +12,11 @@ def main():
             speed = int(input("Enter speed: "))
             duration = int(input("Enter time: "))
             angle = int(input("Enter angle: "))
-            #car.Manuevering_fwd_at_angle(speed, durration, angle)
-            car.set_dir_servo_angle(angle)
-            car.forward(speed)
-            time.sleep(duration)
-            car.stop()
+            car.Manuevering_fwd_at_angle(speed, duration, angle)
+            # car.set_dir_servo_angle(angle)
+            # car.forward(speed)
+            # time.sleep(duration)
+            # car.stop()
             print("Forward command executed.")
 
         elif user_input == 'B':
