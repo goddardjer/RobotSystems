@@ -4,7 +4,7 @@ def main():
     car = picarx_improved.Picarx()
 
     while True:
-        user_input = input("Please enter a command (F,B,PL,PR,K): ")
+        user_input = input("Please enter a command (F,B,PL,PR,K,E): ")
 
         if user_input == 'F':
             # do something for 'F' command
@@ -33,6 +33,9 @@ def main():
         elif user_input == 'K':
             # do something for 'K' command
             print("K turn command executed.")
+
+        elif user_input == 'E':
+            break
 
         else:
             print("Invalid command. Please enter a valid command.")
