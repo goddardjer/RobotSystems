@@ -1,4 +1,5 @@
 import picarx_improved
+import time
 
 def main():
     car = picarx_improved.Picarx()
