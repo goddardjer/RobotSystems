@@ -318,13 +318,13 @@ class Picarx(object):
         self.set_dir_servo_angle(steering_angle)
         self.forward(speed)
         time.sleep(duration)
-        self.stop
+        self.stop()
 
     def Manuevering_back_at_angle(self, speed, duration, steering_angle):
         self.set_dir_servo_angle(steering_angle)
         self.forward(speed)
         time.sleep(duration)
-        self.stop
+        self.stop()
 
     def Parallel_parking_left(self):
         int = 0
