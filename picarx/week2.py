@@ -29,6 +29,8 @@ def main():
 
         elif user_input == 'PL':
             # do something for 'PL' command
+            car.Manuevering_back_at_angle(100,1,-30)
+            car.Manuevering_back_at_angle(100,1,30)
             print("Parallel left command executed.")
 
         elif user_input == 'PR':
