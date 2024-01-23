@@ -10,7 +10,7 @@ def main():
         if user_input == 'F':
             # do something for 'F' command
             speed = int(input("Enter speed: "))
-            durration = int(input("Enter time: "))
+            duration = int(input("Enter time: "))
             angle = int(input("Enter angle: "))
             #car.Manuevering_fwd_at_angle(speed, durration, angle)
             car.set_dir_servo_angle(angle)
@@ -22,9 +22,9 @@ def main():
         elif user_input == 'B':
             # do something for 'B' command
             speed = int(input("Enter speed: "))
-            durration = int(input("Enter time: "))
+            duration = int(input("Enter time: "))
             angle = int(input("Enter angle: "))
-            car.Manuevering_back_at_angle(speed, durration, angle)
+            car.Manuevering_back_at_angle(speed, duration, angle)
             print("Backward command executed.")
 
         elif user_input == 'PL':
