@@ -9,17 +9,17 @@ def main():
         if user_input == 'F':
             # do something for 'F' command
             speed = int(input("Enter speed: "))
-            time = int(input("Enter time: "))
+            durration = int(input("Enter time: "))
             angle = int(input("Enter angle: "))
-            car.Manuevering_fwd_at_angle(speed, time, angle)
+            car.Manuevering_fwd_at_angle(speed, durration, angle)
             print("Forward command executed.")
 
         elif user_input == 'B':
             # do something for 'B' command
             speed = int(input("Enter speed: "))
-            time = int(input("Enter time: "))
+            durration = int(input("Enter time: "))
             angle = int(input("Enter angle: "))
-            car.Manuevering_back_at_angle(speed, time, angle)
+            car.Manuevering_back_at_angle(speed, durration, angle)
             print("Backward command executed.")
 
         elif user_input == 'PL':
