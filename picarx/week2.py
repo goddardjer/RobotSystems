@@ -29,12 +29,16 @@ def main():
 
         elif user_input == 'PL':
             # do something for 'PL' command
-            car.Manuevering_back_at_angle(100,1,-30)
+            car.Manuevering_back_at_angle(100,.75,-30)
             car.Manuevering_back_at_angle(100,1,30)
+            car.Manuevering_fwd_at_angle(70,0.5,0)
             print("Parallel left command executed.")
 
         elif user_input == 'PR':
             # do something for 'PR' command
+            car.Manuevering_back_at_angle(100,.75,30)
+            car.Manuevering_back_at_angle(100,1,-30)
+            car.Manuevering_fwd_at_angle(70,0.5,0)
             print("Parallel right command executed.")
 
         elif user_input == 'K':
