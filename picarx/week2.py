@@ -12,7 +12,7 @@ def main():
             durration = int(input("Enter time: "))
             angle = int(input("Enter angle: "))
             #car.Manuevering_fwd_at_angle(speed, durration, angle)
-            car.set_dir_servo_angle(steering_angle)
+            car.set_dir_servo_angle(angle)
             car.forward(speed)
             time.sleep(duration)
             car.stop()
