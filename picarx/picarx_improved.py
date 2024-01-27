@@ -61,7 +61,7 @@ class Picarx(object):
                 ):
 
         # reset robot_hat
-        utils.reset_mcu()
+        reset_mcu()
         time.sleep(0.2)
 
         # --------- config_flie ---------
@@ -106,7 +106,7 @@ class Picarx(object):
         self.cliff_reference = self.config_flie.get("cliff_reference", default_value=str(self.DEFAULT_CLIFF_REF))
         self.cliff_reference = [float(i) for i in self.cliff_reference.strip().strip('[]').split(',')]
         # transfer reference
-        self.grayscale.reference(self.line_reference)
+        #self.grayscale.reference(self.line_reference)
 
         # --------- ultrasonic init ---------
         tring, echo= ultrasonic_pins
