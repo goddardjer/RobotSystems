@@ -29,6 +29,7 @@ if __name__ == '__main__':
     sensor = Sensor.Sensor()
     interpreter = Interpreter.Interpreter(sensor)
     controller = Controller(interpreter)
+    car.forward(50)
     while True:
-        car.Manuevering_fwd_at_angle(40,.1,controller.control())
+        car.set_dir_servo_angle(controller.control())
         
