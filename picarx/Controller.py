@@ -10,7 +10,7 @@ import time
 
 
 class Controller(object):
-    def __init__(self, interpreter, scaling_factor=30.0):
+    def __init__(self, interpreter, scaling_factor=300.0):
         self.interpreter = interpreter
         self.scaling_factor = scaling_factor
 
@@ -29,7 +29,7 @@ if __name__ == '__main__':
     sensor = Sensor.Sensor()
     interpreter = Interpreter.Interpreter(sensor)
     controller = Controller(interpreter)
-    car.forward(40)
+    car.forward(35)
     while True:
         steering_angle = controller.control()
         print(f'Setting steering angle to: {steering_angle}')  # Debug print
