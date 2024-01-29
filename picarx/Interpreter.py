@@ -30,7 +30,7 @@ class Interpreter:
         return off_center
     
 if __name__ == '__main__':
-    sensor = Sensor()
+    sensor = Sensor.Sensor()
     interpreter = Interpreter(sensor)
     while True:
         print(interpreter.interpret())
