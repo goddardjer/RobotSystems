@@ -31,5 +31,7 @@ if __name__ == '__main__':
     controller = Controller(interpreter)
     car.forward(50)
     while True:
-        car.set_dir_servo_angle(controller.control())
+        steering_angle = controller.control()
+        print(f'Setting steering angle to: {steering_angle}')  # Debug print
+        car.set_dir_servo_angle(steering_angle)
         
