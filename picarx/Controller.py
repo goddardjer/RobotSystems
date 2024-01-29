@@ -34,5 +34,4 @@ if __name__ == '__main__':
         steering_angle = controller.control()
         print(f'Setting steering angle to: {steering_angle}')  # Debug print
         car.set_dir_servo_angle(steering_angle)
-        time.sleep(0.1)
         
