@@ -30,8 +30,12 @@ if __name__ == '__main__':
     interpreter = Interpreter.Interpreter(sensor)
     controller = Controller(interpreter)
     car.forward(35)
-    while True:
-        steering_angle = controller.control()
-        print(f'Setting steering angle to: {steering_angle}')  # Debug print
-        car.set_dir_servo_angle(steering_angle)
-        
+    try:
+        while True:
+            steering_angle = controller.control()
+            print(f'Setting steering angle to: {steering_angle}')  # Debug print
+            car.set_dir_servo_angle(steering_angle)
+    except KeyboardInterrupt:
+        # Stop the car when Ctrl+C is pressed
+        car.stop()
+        print("Program exited gracefully")
