@@ -10,7 +10,7 @@ import time
 
 
 class Controller(object):
-    def __init__(self, interpreter, scaling_factor=300.0):
+    def __init__(self, interpreter, scaling_factor=30.0):
         self.interpreter = interpreter
         self.scaling_factor = scaling_factor
 
