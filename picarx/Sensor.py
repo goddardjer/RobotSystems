@@ -3,7 +3,6 @@ try:
 except ImportError:
     from sim_robot_hat import ADC
 
-import picarx_improved as car_module
 import time
 
 class Sensor:
