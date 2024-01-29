@@ -30,5 +30,5 @@ if __name__ == '__main__':
     interpreter = Interpreter.Interpreter(sensor)
     controller = Controller(interpreter)
     while True:
-        car.Manuevering_fwd_at_angle(40,1,controller.control())
+        car.Manuevering_fwd_at_angle(40,.01,controller.control())
         
