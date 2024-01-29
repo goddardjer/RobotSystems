@@ -6,7 +6,7 @@ import Sensor
 import time
 
 class Interpreter:
-    def __init__(self, sensor, sensitivity=100, polarity='dark'):
+    def __init__(self, sensor, sensitivity=1000, polarity='dark'):
         self.sensor = sensor
         self.sensitivity = sensitivity
         self.polarity = polarity
