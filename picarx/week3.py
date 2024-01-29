@@ -1,4 +1,4 @@
-# If the import of "robot_hat" fails, it will import from "sim_robot_hat" instead.
+
 try:
     from robot_hat import ADC
 except ImportError:
