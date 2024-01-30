@@ -53,7 +53,7 @@ def control_picarx(car):
 
                 # Control the picarx based on the error (e.g., adjust steering angle)
                 steering_angles = [-30, -15, 0, 15, 30]
-                pan_angles = [-15, -5, 0, 5, 15]  # Opposite of steering_angles
+                pan_angles = [-5, -2, 0, 2, 5]  # Opposite of steering_angles
                 if error < -512 * 0.4:
                     steering_angle = steering_angles[0]  # Left
                     pan_angle = pan_angles[0]
