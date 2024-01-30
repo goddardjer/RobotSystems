@@ -10,16 +10,15 @@ import time
 
 
 class Controller(object):
-    def __init__(self, interpreter, scaling_factor=-10.0):
+    def __init__(self, interpreter):
         self.interpreter = interpreter
-        self.scaling_factor = scaling_factor
 
     def control(self):
         # Get the offset from the interpreter
         offset = self.interpreter.interpret()
 
         # Define the steering angles for left, kinda left, center, kinda right, right
-        steering_angles = [-30, -15, 0, 15, 30]
+        steering_angles = [30, 15, 0, -15, -30]
 
         # Calculate the steering angle based on the offset
         if offset < -0.5:
