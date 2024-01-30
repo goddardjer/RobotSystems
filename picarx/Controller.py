@@ -18,12 +18,23 @@ class Controller(object):
         # Get the offset from the interpreter
         offset = self.interpreter.interpret()
 
-        # Calculate the steering angle based on the offset and scaling factor
-        steering_angle = offset * self.scaling_factor
+        # Define the steering angles for left, kinda left, center, kinda right, right
+        steering_angles = [-30, -15, 0, 15, 30]
+
+        # Calculate the steering angle based on the offset
+        if offset < -0.5:
+            steering_angle = steering_angles[0]  # Left
+        elif -0.5 <= offset < -0.1:
+            steering_angle = steering_angles[1]  # Kinda left
+        elif -0.1 <= offset <= 0.1:
+            steering_angle = steering_angles[2]  # Center
+        elif 0.1 < offset <= 0.5:
+            steering_angle = steering_angles[3]  # Kinda right
+        else:
+            steering_angle = steering_angles[4]  # Right
 
         # Return the commanded steering angle
         return steering_angle
-    
 if __name__ == '__main__':
     car = pixi.Picarx()
     sensor = Sensor.Sensor()
