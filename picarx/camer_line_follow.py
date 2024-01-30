@@ -1,5 +1,6 @@
 # Import necessary libraries
 import cv2
+import numpy as np
 import picarx_improved as pixi
 
 def control_picarx(car): 
@@ -7,23 +8,27 @@ def control_picarx(car):
     camera = cv2.VideoCapture(0)  # Use the appropriate camera index
     camera.set(cv2.CAP_PROP_FRAME_WIDTH, 640)
     camera.set(cv2.CAP_PROP_FRAME_HEIGHT, 480)
+
     # Main loop
     while True:
         # Capture frame from the camera
         ret, frame = camera.read()
 
-        # Define the region of interest (ROI)
-        # This is an example, adjust the values according to your needs
-        y_start = 120
-        y_end = 360
-        x_start = 0
-        x_end = 640
+        # Convert the frame to HSV color space
+        hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
 
-        # Crop the frame
-        cropped_frame = frame[y_start:y_end, x_start:x_end]
+        # Define range for value channel
+        lower_val = np.array([0, 0, 0])
+        upper_val = np.array([180, 255, 100])
+
+        # Threshold the HSV image to get only desired colors
+        mask = cv2.inRange(hsv, lower_val, upper_val)
+
+        # Bitwise-AND mask and original image
+        frame = cv2.bitwise_and(frame, frame, mask=mask)
 
         # Preprocess the frame (e.g., convert to grayscale, apply filters)
-        gray = cv2.cvtColor(cropped_frame, cv2.COLOR_BGR2GRAY)
+        gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
         blur = cv2.GaussianBlur(gray, (5, 5), 0)
         _, threshold = cv2.threshold(blur, 60, 255, cv2.THRESH_BINARY_INV)
 
@@ -37,7 +42,7 @@ def control_picarx(car):
             if M['m00'] != 0:
                 cx = int(M['m10']/M['m00'])
                 cy = int(M['m01']/M['m00'])
-                error = cx - cropped_frame.shape[1]//2
+                error = cx - frame.shape[1]//2
 
                 # Control the picarx based on the error (e.g., adjust steering angle)
                 steering_angles = [30, 15, 0, -15, -30]
@@ -55,7 +60,7 @@ def control_picarx(car):
                 car.set_dir_servo_angle(steering_angle)
 
         # Display the processed frame (optional)
-        cv2.imshow('Frame', cropped_frame)
+        cv2.imshow('Frame', frame)
         cv2.imshow('Threshold', threshold)
 
         # Check for exit condition (e.g., press 'q' to quit)
