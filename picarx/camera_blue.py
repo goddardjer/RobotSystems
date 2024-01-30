@@ -30,17 +30,29 @@ def control_picarx(car):
         # Bitwise-AND mask and original image
         res = cv2.bitwise_and(frame, frame, mask=mask)
 
-        # Convert the result to grayscale
-        gray = cv2.cvtColor(res, cv2.COLOR_BGR2GRAY)
+        # Split the image into B, G, R channels
+        b, g, r = cv2.split(res)
 
-        # Apply Gaussian blur and thresholding
-        blur = cv2.GaussianBlur(gray, (5, 5), 0)
-        _, threshold = cv2.threshold(blur, 60, 255, cv2.THRESH_BINARY_INV)
+        # Apply Gaussian blur and thresholding to each channel
+        blur_b = cv2.GaussianBlur(b, (5, 5), 0)
+        _, threshold_b = cv2.threshold(blur_b, 60, 255, cv2.THRESH_BINARY_INV)
+
+        blur_g = cv2.GaussianBlur(g, (5, 5), 0)
+        _, threshold_g = cv2.threshold(blur_g, 60, 255, cv2.THRESH_BINARY_INV)
+
+        blur_r = cv2.GaussianBlur(r, (5, 5), 0)
+        _, threshold_r = cv2.threshold(blur_r, 60, 255, cv2.THRESH_BINARY_INV)
+
+        # Combine the thresholds
+        threshold = cv2.merge([threshold_b, threshold_g, threshold_r])
+
+        # Convert the merged threshold to grayscale
+        threshold_gray = cv2.cvtColor(threshold, cv2.COLOR_BGR2GRAY)
 
         # Apply image processing techniques to detect the line
-        contours, _ = cv2.findContours(threshold, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+        contours, _ = cv2.findContours(threshold_gray, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
         contours = sorted(contours, key=lambda x: cv2.contourArea(x), reverse=True)
-
+        
         # Draw contours on the frame
         cv2.drawContours(frame, contours, -1, (0, 255, 0), 3)
 
@@ -54,25 +66,18 @@ def control_picarx(car):
 
                 # Control the picarx based on the error (e.g., adjust steering angle)
                 steering_angles = [-30, -15, 0, 15, 30]
-                pan_angles = [-5, -2, 0, 2, 5]  # Opposite of steering_angles
                 if error < -512 * 0.4:
                     steering_angle = steering_angles[0]  # Left
-                    #pan_angle = pan_angles[0]
                 elif -512 * 0.4 <= error < -512 * 0.1:
                     steering_angle = steering_angles[1]  # Kinda left
-                    #pan_angle = pan_angles[1]
                 elif -512 * 0.1 <= error <= 512 * 0.1:
                     steering_angle = steering_angles[2]  # Center
-                    #pan_angle = pan_angles[2]
                 elif 512 * 0.1 < error <= 512 * 0.4:
                     steering_angle = steering_angles[3]  # Kinda right
-                    #pan_angle = pan_angles[3]
                 else:
                     steering_angle = steering_angles[4]  # Right
-                    #pan_angle = pan_angles[4]
                 
                 car.set_dir_servo_angle(steering_angle)
-                #car.set_cam_pan_angle(pan_angle)
 
         # Display the processed frame (optional)
         cv2.imshow('Threshold', threshold)
