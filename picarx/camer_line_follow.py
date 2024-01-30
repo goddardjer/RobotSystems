@@ -28,6 +28,7 @@ def control_picarx(car):
         # mask = cv2.inRange(hsv, lower_val, upper_val)
 
         # Bitwise-AND mask and original image
+        # 
         # frame = cv2.bitwise_and(frame, frame, mask=mask)
 
         # Preprocess the frame (e.g., convert to grayscale, apply filters)
@@ -52,18 +53,25 @@ def control_picarx(car):
 
                 # Control the picarx based on the error (e.g., adjust steering angle)
                 steering_angles = [-30, -15, 0, 15, 30]
+                pan_angles = [-15, -5, 0, 5, 15]  # Opposite of steering_angles
                 if error < -512 * 0.4:
                     steering_angle = steering_angles[0]  # Left
+                    pan_angle = pan_angles[0]
                 elif -512 * 0.4 <= error < -512 * 0.1:
                     steering_angle = steering_angles[1]  # Kinda left
+                    pan_angle = pan_angles[1]
                 elif -512 * 0.1 <= error <= 512 * 0.1:
                     steering_angle = steering_angles[2]  # Center
+                    pan_angle = pan_angles[2]
                 elif 512 * 0.1 < error <= 512 * 0.4:
                     steering_angle = steering_angles[3]  # Kinda right
+                    pan_angle = pan_angles[3]
                 else:
                     steering_angle = steering_angles[4]  # Right
+                    pan_angle = pan_angles[4]
                 
                 car.set_dir_servo_angle(steering_angle)
+                car.set_cam_pan_angle(pan_angle)
 
         # Display the processed frame (optional)
         # cv2.imshow('Frame', frame)
