@@ -48,7 +48,7 @@ def control_picarx(car):
                 error = cx - frame.shape[1]//2
 
                 # Control the picarx based on the error (e.g., adjust steering angle)
-                steering_angles = [30, 15, 0, -15, -30]
+                steering_angles = [-30, -15, 0, 15, 30]
                 if error < -512 * 0.4:
                     steering_angle = steering_angles[0]  # Left
                 elif -512 * 0.4 <= error < -512 * 0.1:
