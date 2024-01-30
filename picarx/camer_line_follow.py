@@ -5,7 +5,8 @@ import picarx_improved as pixi
 def control_picarx(car): 
     # Initialize the camera
     camera = cv2.VideoCapture(0)  # Use the appropriate camera index
-
+    camera.set(cv2.CAP_PROP_FRAME_WIDTH, 640)
+    camera.set(cv2.CAP_PROP_FRAME_HEIGHT, 480)
     # Main loop
     while True:
         # Capture frame from the camera
@@ -13,10 +14,10 @@ def control_picarx(car):
 
         # Define the region of interest (ROI)
         # This is an example, adjust the values according to your needs
-        y_start = 100
-        y_end = 300
-        x_start = 200
-        x_end = 800
+        y_start = 120
+        y_end = 360
+        x_start = 0
+        x_end = 640
 
         # Crop the frame
         cropped_frame = frame[y_start:y_end, x_start:x_end]
