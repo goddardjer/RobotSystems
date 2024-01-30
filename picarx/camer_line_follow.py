@@ -59,5 +59,7 @@ def control_picarx(car):
 
 if __name__ == '__main__':
     car = pixi.Picarx()
+    car.set_cam_tilt_angle(-30)
+    wait = input("Press enter to start")
     car.forward(35)
     control_picarx(car)
