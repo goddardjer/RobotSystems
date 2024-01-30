@@ -9,6 +9,9 @@ def control_picarx(car):
     camera.set(cv2.CAP_PROP_FRAME_WIDTH, 640)
     camera.set(cv2.CAP_PROP_FRAME_HEIGHT, 480)
 
+    wait = input("Press enter to start")
+    car.forward(35)
+
     # Main loop
     while True:
         # Capture frame from the camera
@@ -77,6 +80,4 @@ def control_picarx(car):
 if __name__ == '__main__':
     car = pixi.Picarx()
     car.set_cam_tilt_angle(-50)
-    wait = input("Press enter to start")
-    car.forward(35)
     control_picarx(car)
