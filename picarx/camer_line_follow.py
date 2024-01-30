@@ -20,15 +20,16 @@ def control_picarx(car):
         # Convert the frame to HSV color space
         hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
 
-        # Define range for blue color in HSV
-        lower_blue = np.array([100, 150, 0])
-        upper_blue = np.array([140, 255, 255])
+        # Define range for value channel
+        lower_val = np.array([0, 0, 0])
+        upper_val = np.array([180, 255, 100])
 
-        # Threshold the HSV image to get only blue colors
-        mask = cv2.inRange(hsv, lower_blue, upper_blue)
+        # Threshold the HSV image to get only desired colors
+        # mask = cv2.inRange(hsv, lower_val, upper_val)
 
         # Bitwise-AND mask and original image
-        frame = cv2.bitwise_and(frame, frame, mask=mask)
+        # 
+        # frame = cv2.bitwise_and(frame, frame, mask=mask)
 
         # Preprocess the frame (e.g., convert to grayscale, apply filters)
         gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
@@ -52,21 +53,28 @@ def control_picarx(car):
 
                 # Control the picarx based on the error (e.g., adjust steering angle)
                 steering_angles = [-30, -15, 0, 15, 30]
+                #pan_angles = [-15, -5, 0, 5, 15]  # Opposite of steering_angles
                 if error < -512 * 0.4:
                     steering_angle = steering_angles[0]  # Left
+                    #pan_angle = pan_angles[0]
                 elif -512 * 0.4 <= error < -512 * 0.1:
                     steering_angle = steering_angles[1]  # Kinda left
+                    #pan_angle = pan_angles[1]
                 elif -512 * 0.1 <= error <= 512 * 0.1:
                     steering_angle = steering_angles[2]  # Center
+                    #pan_angle = pan_angles[2]
                 elif 512 * 0.1 < error <= 512 * 0.4:
                     steering_angle = steering_angles[3]  # Kinda right
+                    #pan_angle = pan_angles[3]
                 else:
                     steering_angle = steering_angles[4]  # Right
+                    #pan_angle = pan_angles[4]
                 
                 car.set_dir_servo_angle(steering_angle)
+                car.set_cam_pan_angle
 
         # Display the processed frame (optional)
-        cv2.imshow('Frame', frame)
+        # cv2.imshow('Frame', frame)
         cv2.imshow('Threshold', threshold)
 
         # Check for exit condition (e.g., press 'q' to quit)
