@@ -36,6 +36,9 @@ def control_picarx(car):
         contours, _ = cv2.findContours(threshold, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
         contours = sorted(contours, key=lambda x: cv2.contourArea(x), reverse=True)
 
+        # Draw contours on the frame
+        cv2.drawContours(frame, contours, -1, (0, 255, 0), 3)
+
         # Calculate the error (e.g., distance from the center of the line)
         if contours:
             M = cv2.moments(contours[0])
