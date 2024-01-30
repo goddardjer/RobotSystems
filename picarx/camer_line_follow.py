@@ -25,10 +25,10 @@ def control_picarx(car):
         upper_val = np.array([180, 255, 100])
 
         # Threshold the HSV image to get only desired colors
-        # mask = cv2.inRange(hsv, lower_val, upper_val)
+        mask = cv2.inRange(hsv, lower_val, upper_val)
 
         # Bitwise-AND mask and original image
-        # frame = cv2.bitwise_and(frame, frame, mask=mask)
+        frame = cv2.bitwise_and(frame, frame, mask=mask)
 
         # Preprocess the frame (e.g., convert to grayscale, apply filters)
         gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
