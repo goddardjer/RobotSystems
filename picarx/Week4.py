@@ -79,15 +79,19 @@ def sensor_function(bus, delay):
         time.sleep(delay)
 
 def interpreter_function(sensor_bus, interpreter_bus, delay):
-    interpreter = Interpreter(Sensor())
     while True:
-        interpreter_bus.write(interpreter.interpret())
+        sensor_data = sensor_bus.read()
+        if sensor_data is not None:
+            interpreter = Interpreter(sensor_data)
+            interpreter_bus.write(interpreter.interpret())
         time.sleep(delay)
 
 def controller_function(interpreter_bus, delay):
-    controller = Controller(Interpreter(Sensor()))
     while True:
-        print(controller.control())
+        interpreter_data = interpreter_bus.read()
+        if interpreter_data is not None:
+            controller = Controller(interpreter_data)
+            print(controller.control())
         time.sleep(delay)
 
 if __name__ == '__main__':
