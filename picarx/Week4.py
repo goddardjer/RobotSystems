@@ -25,7 +25,9 @@ class Sensor:
     
     def producer(self, bus, delay):
         while True:
-            bus.write(self.read())
+            sensor_values = self.read()
+            print(f"Sensor: Read values {sensor_values}")
+            bus.write(sensor_values)
             time.sleep(delay)
 
 
@@ -55,10 +57,13 @@ class Interpreter:
     def consumer_producer(self, sensor_bus, interpreter_bus, delay):
         while True:
             sensor_values = sensor_bus.read()
+            print(f"Interpreter: Read values from sensor bus {sensor_values}")
             self.left, self.center, self.right = sensor_values
             interpreted_values = self.interpret()
+            print(f"Interpreter: Interpreted values {interpreted_values}")
             interpreter_bus.write(interpreted_values)
             time.sleep(delay)
+
 
 class Controller(object):
     def __init__(self):
@@ -88,7 +93,9 @@ class Controller(object):
     def consumer(self, interpreter_bus, delay, car):
         while True:
             interpreted_values = interpreter_bus.read()
+            print(f"Controller: Read interpreted values {interpreted_values}")
             steering_angle = self.control(interpreted_values)
+            print(f"Controller: Set steering angle to {steering_angle}")
             car.set_dir_servo_angle(steering_angle)
             time.sleep(delay)
 
@@ -102,9 +109,9 @@ if __name__ == '__main__':
     controller = Controller()
     car.forward(35)
     with concurrent.futures.ThreadPoolExecutor(max_workers=3) as executor:
-        eSensor = executor.submit(sensor.producer, sensor_bus, .001)
-        eInterpreter = executor.submit(interpreter.consumer_producer, sensor_bus, interpreter_bus,.01)
-        eController = executor.submit(controller.consumer, interpreter_bus, .1, car)
+        eSensor = executor.submit(sensor.producer, sensor_bus, .1)
+        eInterpreter = executor.submit(interpreter.consumer_producer, sensor_bus, interpreter_bus,.3)
+        eController = executor.submit(controller.consumer, interpreter_bus, .5, car)
     eSensor.result()
     eInterpreter.result()
     eController.result()
