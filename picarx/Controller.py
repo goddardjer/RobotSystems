@@ -34,6 +34,7 @@ class Controller(object):
 
         # Return the commanded steering angle
         return steering_angle
+    
 if __name__ == '__main__':
     car = pixi.Picarx()
     sensor = Sensor.Sensor()
