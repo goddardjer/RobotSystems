@@ -4,6 +4,7 @@ try:
     from robot_hat import ADC
 except ImportError:
     from sim_robot_hat import ADC
+import picarx_improved as pixi
 
 class Bus:
     def __init__(self):
@@ -22,18 +23,15 @@ class Sensor:
     def read(self):
         return [self.channel1.read(), self.channel2.read(), self.channel3.read()]
     
-def sensor_function(sensor_bus, delay):
-    sensor = Sensor()
-    while True:
-        sensor_values = sensor.read()
-        sensor_bus.write(sensor_values)
-        time.sleep(delay)
+    def producer(self, bus, delay):
+        while True:
+            bus.write(self.read())
+            time.sleep(delay)
 
 
 
 class Interpreter:
-    def __init__(self, sensor, sensitivity=50, polarity='dark'):
-        self.sensor = sensor
+    def __init__(self, sensitivity=50, polarity='dark'):
         self.sensitivity = sensitivity
         self.polarity = polarity
         self.left = 0
@@ -41,7 +39,6 @@ class Interpreter:
         self.center = 0
 
     def interpret(self):
-        self.left, self.center, self.right = self.sensor.read()
         edge_left = abs(self.left - self.center)
         edge_right = abs(self.right - self.center)
 
@@ -55,19 +52,20 @@ class Interpreter:
 
         return off_center
     
-    def producer(self, sensor_bus, delay):
+    def consumer_producer(self, sensor_bus, interpreter_bus, delay):
         while True:
-            sensor_values = self.sensor.read()
-            sensor_bus.write(sensor_values)
+            sensor_values = sensor_bus.read()
+            self.left, self.center, self.right = sensor_values
+            interpreted_values = self.interpret()
+            interpreter_bus.write(interpreted_values)
             time.sleep(delay)
 
 class Controller(object):
-    def __init__(self, interpreter):
-        self.interpreter = interpreter
+    def __init__(self):
+        pass
 
-    def control(self):
+    def control(self, offset):
         # Get the offset from the interpreter
-        offset = self.interpreter.interpret()
 
         # Define the steering angles for left, kinda left, center, kinda right, right
         steering_angles = [30, 15, 0, -15, -30]
@@ -87,14 +85,16 @@ class Controller(object):
         # Return the commanded steering angle
         return steering_angle
     
-    def consumer(self, interpreter_bus, delay):
+    def consumer(self, interpreter_bus, delay, car):
         while True:
             interpreted_values = interpreter_bus.read()
-            self.control(interpreted_values)
+            steering_angle = self.control(interpreted_values)
+            car.set_dir_servo_angle(steering_angle)
             time.sleep(delay)
 
 
 if __name__ == '__main__':
+    car = pixi.Picarx()
     sensor_bus = Bus()
     interpreter_bus = Bus()
     sensor = Sensor()
@@ -103,7 +103,7 @@ if __name__ == '__main__':
     with concurrent.futures.ThreadPoolExecutor(max_workers=3) as executor:
         eSensor = executor.submit(sensor.producer, sensor_bus, .001)
         eInterpreter = executor.submit(interpreter.consumer_producer, sensor_bus, interpreter_bus,.01)
-        eController = executor.submit(controller.consumer, interpreter_bus, .1)
+        eController = executor.submit(controller.consumer, interpreter_bus, .1, car)
     eSensor.result()
     eInterpreter.result()
     eController.result()
