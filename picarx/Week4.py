@@ -21,6 +21,15 @@ class Sensor:
 
     def read(self):
         return [self.channel1.read(), self.channel2.read(), self.channel3.read()]
+    
+def sensor_function(sensor_bus, delay):
+    sensor = Sensor()
+    while True:
+        sensor_values = sensor.read()
+        sensor_bus.write(sensor_values)
+        time.sleep(delay)
+
+
 
 class Interpreter:
     def __init__(self, sensor, sensitivity=50, polarity='dark'):
@@ -45,6 +54,12 @@ class Interpreter:
         off_center = max(min(off_center, 1), -1)
 
         return off_center
+    
+    def producer(self, sensor_bus, delay):
+        while True:
+            sensor_values = self.sensor.read()
+            sensor_bus.write(sensor_values)
+            time.sleep(delay)
 
 class Controller(object):
     def __init__(self, interpreter):
@@ -71,34 +86,24 @@ class Controller(object):
 
         # Return the commanded steering angle
         return steering_angle
+    
+    def consumer(self, interpreter_bus, delay):
+        while True:
+            interpreted_values = interpreter_bus.read()
+            self.control(interpreted_values)
+            time.sleep(delay)
 
-def sensor_function(bus, delay):
-    sensor = Sensor()
-    while True:
-        bus.write(sensor.read())
-        time.sleep(delay)
-
-def interpreter_function(sensor_bus, interpreter_bus, delay):
-    while True:
-        sensor_data = sensor_bus.read()
-        if sensor_data is not None:
-            interpreter = Interpreter(sensor_data)
-            interpreter_bus.write(interpreter.interpret())
-        time.sleep(delay)
-
-def controller_function(interpreter_bus, delay):
-    while True:
-        interpreter_data = interpreter_bus.read()
-        if interpreter_data is not None:
-            controller = Controller(interpreter_data)
-            print(controller.control())
-        time.sleep(delay)
 
 if __name__ == '__main__':
     sensor_bus = Bus()
     interpreter_bus = Bus()
-    delay = 0.1
+    sensor = Sensor()
+    interpreter = Interpreter()
+    controller = Controller()
     with concurrent.futures.ThreadPoolExecutor(max_workers=3) as executor:
-        eSensor = executor.submit(sensor_function, sensor_bus, delay)
-        eInterpreter = executor.submit(interpreter_function, sensor_bus, interpreter_bus, delay)
-        eController = executor.submit(controller_function, interpreter_bus, delay)
+        eSensor = executor.submit(sensor.producer, sensor_bus, .001)
+        eInterpreter = executor.submit(interpreter.consumer_producer, sensor_bus, interpreter_bus,.01)
+        eController = executor.submit(controller.consumer, interpreter_bus, .1)
+    eSensor.result()
+    eInterpreter.result()
+    eController.result()
