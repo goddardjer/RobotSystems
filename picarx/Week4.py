@@ -100,6 +100,7 @@ if __name__ == '__main__':
     sensor = Sensor()
     interpreter = Interpreter()
     controller = Controller()
+    car.forward(35)
     with concurrent.futures.ThreadPoolExecutor(max_workers=3) as executor:
         eSensor = executor.submit(sensor.producer, sensor_bus, .001)
         eInterpreter = executor.submit(interpreter.consumer_producer, sensor_bus, interpreter_bus,.01)
