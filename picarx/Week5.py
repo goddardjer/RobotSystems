@@ -70,12 +70,12 @@ class Controller(object):
         self.car = car
 
     def control(self, offset, ultraSonicDistance):
-        print(f"offset: {offset}, ultraSonicDistance: {ultraSonicDistance}")
+        #print(f"offset: {offset}, ultraSonicDistance: {ultraSonicDistance}")
 
         # Define the steering angles for left, kinda left, center, kinda right, right
         steering_angles = [30, 15, 0, -15, -30]
 
-        print("Top of control")
+        #print("Top of control")
 
         # Calculate the steering angle based on the offset
         if offset < -0.5:
@@ -89,7 +89,7 @@ class Controller(object):
         else:
             steering_angle = steering_angles[4]  # Right
 
-        print("Steering angle: ", steering_angle)
+        #print("Steering angle: ", steering_angle)
 
         car.set_dir_servo_angle(steering_angle)
 
@@ -108,16 +108,16 @@ bTerminate = rr.Bus(0, "Termination Bus")
 
 # Wrap the square wave signal generator into a producer
 sensor = Sensor()
-readSensor = rr.Producer(sensor.read, bSensor_Interp, 0.001, bTerminate, "Read sensor values")
+readSensor = rr.Producer(sensor.read, bSensor_Interp, 0.01, bTerminate, "Read sensor values")
 
 # Wrap the multiplier function into a consumer-producer
 interpreter = Interpreter()
-interpSensor = rr.ConsumerProducer(interpreter.interpret, bSensor_Interp, bInterp_Control, 0.01, bTerminate, "Interpret sensor values and write to control bus")
+interpSensor = rr.ConsumerProducer(interpreter.interpret, bSensor_Interp, bInterp_Control, 0.05, bTerminate, "Interpret sensor values and write to control bus")
 
 car = pixi.Picarx()
 
 ultraSonic = UltraSonic(car)
-readUltraSonic = rr.Producer(ultraSonic.read, bUltraSonic_Interp, 0.001, bTerminate, "Read ultrasonic values")
+readUltraSonic = rr.Producer(ultraSonic.read, bUltraSonic_Interp, 0.01, bTerminate, "Read ultrasonic values")
 #ultraSonicAvoidance = rr.Producer(ultraSonic.obsitcal_avoidance, bTerminate, 0.01, bTerminate, "UltraSonic avoidance")
 
 controller = Controller(car)
@@ -129,7 +129,7 @@ controlPicarx = rr.Consumer(controller.control, (bInterp_Control, bUltraSonic_In
 printBuses = rr.Printer([bSensor_Interp, bInterp_Control, bUltraSonic_Interp], 0.1, bTerminate, "Print raw and derived data", "Data bus readings are: ")
 
 # Make a timer (a special kind of producer) that turns on the termination bus when it triggers
-terminationTimer = rr.Timer(bTerminate, .5, 0.1, bTerminate, "Termination timer")
+terminationTimer = rr.Timer(bTerminate, 5.0, 0.1, bTerminate, "Termination timer")
 
 """ Fifth Part: Concurrent execution """
 
