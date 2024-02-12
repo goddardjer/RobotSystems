@@ -23,6 +23,7 @@ class Sensor:
         self.channel1, self.channel2, self.channel3 = ADC('A0'), ADC('A1'), ADC('A2')
 
     def read(self):
+        print("Sensor values: ", self.channel1.read(), self.channel2.read(), self.channel3.read())
         return [self.channel1.read(), self.channel2.read(), self.channel3.read()]
     
 class UltraSonic:
@@ -30,14 +31,9 @@ class UltraSonic:
         self.px = px
 
     def read(self):
+        print("distance: ", self.px.get_distance())
         return self.px.get_distance()
     
-    def obsitcal_avoidance(self):
-        distance = self.read()
-        if distance >= 10:
-            self.px.forward(0)
-        else:
-            self.px.forward(25)
 
 class Interpreter:
     def __init__(self, sensitivity=50, polarity='dark'):
@@ -59,6 +55,8 @@ class Interpreter:
 
         # Clamp the off_center value between -1 and 1
         off_center = max(min(off_center, 1), -1)
+
+        print("Off center: ", off_center)
 
         return off_center
 
@@ -82,7 +80,11 @@ class Controller(object):
         else:
             steering_angle = steering_angles[4]  # Right
 
+        print("Steering angle: ", steering_angle)
+
         car.set_dir_servo_angle(steering_angle)
+
+
         
 
 """ Second Part: Create buses for passing data """
@@ -107,7 +109,7 @@ car = pixi.Picarx()
 
 ultraSonic = UltraSonic(car)
 readUltraSonic = rr.Producer(ultraSonic.read, bUltraSonic_Interp, 0.001, bTerminate, "Read ultrasonic values")
-ultraSonicAvoidance = rr.ConsumerProducer(ultraSonic.obsitcal_avoidance, bTerminate, 0.01, bTerminate, "UltraSonic avoidance")
+ultraSonicAvoidance = rr.Producer(ultraSonic.obsitcal_avoidance, bTerminate, 0.01, bTerminate, "UltraSonic avoidance")
 
 controller = Controller(car)
 controlPicarx = rr.ConsumerProducer(controller.control, [bInterp_Control, bUltraSonic_Interp], None, 0.1, bTerminate, "Control Picarx with interpreted values")
