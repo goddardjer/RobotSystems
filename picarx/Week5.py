@@ -90,6 +90,7 @@ class Controller(object):
 # Initiate data and termination busses
 bSensor_Interp = rr.Bus(0, "Sensor to Interpreter Bus")
 bInterp_Control = rr.Bus(0, "Interpreter to Control Bus")
+bUltraSonic_Interp = rr.Bus(0, "UltraSonic to Interpreter Bus")
 bTerminate = rr.Bus(0, "Termination Bus")
 
 """ Third Part: Wrap signal generation and processing functions into RossROS objects """
@@ -100,20 +101,21 @@ readSensor = rr.Producer(sensor.read, bSensor_Interp, 0.001, bTerminate, "Read s
 
 # Wrap the multiplier function into a consumer-producer
 interpreter = Interpreter()
-interpSensor = rr.ConsumerProducer(interpreter.interpret, [bSensor_Interp], bInterp_Control, 0.01, bTerminate, "Interpret sensor values and write to control bus")
+interpSensor = rr.ConsumerProducer(interpreter.interpret, [bSensor_Interp, bUltraSonic_Interp], bInterp_Control, 0.01, bTerminate, "Interpret sensor values and write to control bus")
 
 car = pixi.Picarx()
 
 ultraSonic = UltraSonic(car)
-ultraSonicAvoidance = rr.Producer(ultraSonic.obsitcal_avoidance, bTerminate, 0.01, bTerminate, "UltraSonic avoidance")
+readUltraSonic = rr.Producer(ultraSonic.read, bUltraSonic_Interp, 0.001, bTerminate, "Read ultrasonic values")
+ultraSonicAvoidance = rr.ConsumerProducer(ultraSonic.obsitcal_avoidance, bTerminate, 0.01, bTerminate, "UltraSonic avoidance")
 
 controller = Controller(car)
-controlPicarx = rr.ConsumerProducer(controller.control, [bInterp_Control], None, 0.1, bTerminate, "Control Picarx with interpreted values")
+controlPicarx = rr.ConsumerProducer(controller.control, [bInterp_Control, bUltraSonic_Interp], None, 0.1, bTerminate, "Control Picarx with interpreted values")
 
 """ Fourth Part: Create RossROS Printer and Timer objects """
 
 # Make a printer that returns the most recent wave and product values
-printBuses = rr.Printer([bSensor_Interp, bInterp_Control], 0.5, bTerminate, "Print raw and derived data", "Data bus readings are: ")
+printBuses = rr.Printer([bSensor_Interp, bInterp_Control, bUltraSonic_Interp], 0.5, bTerminate, "Print raw and derived data", "Data bus readings are: ")
 
 # Make a timer (a special kind of producer) that turns on the termination bus when it triggers
 terminationTimer = rr.Timer(bTerminate, 3, 0.1, bTerminate, "Termination timer")
@@ -121,7 +123,7 @@ terminationTimer = rr.Timer(bTerminate, 3, 0.1, bTerminate, "Termination timer")
 """ Fifth Part: Concurrent execution """
 
 # Create a list of producer-consumers to execute concurrently
-producer_consumer_list = [readSensor, interpSensor, controlPicarx, printBuses, terminationTimer]
+producer_consumer_list = [readSensor, readUltraSonic, interpSensor, controlPicarx, ultraSonicAvoidance, printBuses, terminationTimer]
 
 # Execute the list of producer-consumers concurrently
 rr.runConcurrently(producer_consumer_list)
