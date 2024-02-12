@@ -70,6 +70,8 @@ class Controller(object):
         self.car = car
 
     def control(self, offset, ultraSonicDistance):
+        print(f"offset: {offset}, ultraSonicDistance: {ultraSonicDistance}")
+
         # Define the steering angles for left, kinda left, center, kinda right, right
         steering_angles = [30, 15, 0, -15, -30]
 
