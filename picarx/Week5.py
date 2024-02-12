@@ -109,7 +109,7 @@ car = pixi.Picarx()
 
 ultraSonic = UltraSonic(car)
 readUltraSonic = rr.Producer(ultraSonic.read, bUltraSonic_Interp, 0.001, bTerminate, "Read ultrasonic values")
-ultraSonicAvoidance = rr.Producer(ultraSonic.obsitcal_avoidance, bTerminate, 0.01, bTerminate, "UltraSonic avoidance")
+#ultraSonicAvoidance = rr.Producer(ultraSonic.obsitcal_avoidance, bTerminate, 0.01, bTerminate, "UltraSonic avoidance")
 
 controller = Controller(car)
 controlPicarx = rr.ConsumerProducer(controller.control, [bInterp_Control, bUltraSonic_Interp], None, 0.1, bTerminate, "Control Picarx with interpreted values")
