@@ -13,7 +13,7 @@ try:
 except ImportError:
     from sim_robot_hat import ADC
 
-# logging.getLogger().setLevel(logging.DEBUG)
+logging.getLogger().setLevel(logging.DEBUG)
 logging.getLogger().setLevel(logging.INFO)
 
 """ First Part: Generation and processing functions """
