@@ -28,11 +28,9 @@ class Sensor:
 class UltraSonic:
     def __init__(self, px):
         self.px = px
-        self.channel_1 = ADC('D2')
-        self.channel_2 = ADC('D3')
 
     def read(self):
-        return [self.channel_1.read(), self.channel_2.read()]
+        return self.px.get_distance()
     
     def obsitcal_avoidance(self):
         distance = self.read()
@@ -65,8 +63,8 @@ class Interpreter:
         return off_center
 
 class Controller(object):
-    def __init__(self):
-        pass
+    def __init__(self, car):
+        self.car = car
 
     def control(self, offset):
         # Define the steering angles for left, kinda left, center, kinda right, right
@@ -84,8 +82,8 @@ class Controller(object):
         else:
             steering_angle = steering_angles[4]  # Right
 
-        # Return the commanded steering angle
-        return steering_angle
+        car.set_dir_servo_angle(steering_angle)
+        
 
 """ Second Part: Create buses for passing data """
 
@@ -104,16 +102,21 @@ readSensor = rr.Producer(sensor.read, bSensor_Interp, 0.001, bTerminate, "Read s
 interpreter = Interpreter()
 interpSensor = rr.ConsumerProducer(interpreter.interpret, [bSensor_Interp], bInterp_Control, 0.01, bTerminate, "Interpret sensor values and write to control bus")
 
-controller = Controller()
+car = pixi.Picarx()
+
+ultraSonic = UltraSonic(car)
+ultraSonicAvoidance = rr.Producer(ultraSonic.obsitcal_avoidance, bTerminate, 0.01, bTerminate, "UltraSonic avoidance")
+
+controller = Controller(car)
 controlPicarx = rr.ConsumerProducer(controller.control, [bInterp_Control], None, 0.1, bTerminate, "Control Picarx with interpreted values")
 
 """ Fourth Part: Create RossROS Printer and Timer objects """
 
 # Make a printer that returns the most recent wave and product values
-printBuses = rr.Printer([bSensor_Interp, bInterp_Control], 0.25, bTerminate, "Print raw and derived data", "Data bus readings are: ")
+printBuses = rr.Printer([bSensor_Interp, bInterp_Control], 0.5, bTerminate, "Print raw and derived data", "Data bus readings are: ")
 
 # Make a timer (a special kind of producer) that turns on the termination bus when it triggers
-terminationTimer = rr.Timer(bTerminate, 3, 0.01, bTerminate, "Termination timer")
+terminationTimer = rr.Timer(bTerminate, 3, 0.1, bTerminate, "Termination timer")
 
 """ Fifth Part: Concurrent execution """
 
