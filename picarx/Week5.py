@@ -23,7 +23,7 @@ class Sensor:
         self.channel1, self.channel2, self.channel3 = ADC('A0'), ADC('A1'), ADC('A2')
 
     def read(self):
-        print("Sensor values: ", self.channel1.read(), self.channel2.read(), self.channel3.read())
+        #print("Sensor values: ", self.channel1.read(), self.channel2.read(), self.channel3.read())
         return [self.channel1.read(), self.channel2.read(), self.channel3.read()]
     
 class UltraSonic:
@@ -43,20 +43,25 @@ class Interpreter:
         self.right = 0
         self.center = 0
 
-    def interpret(self, sensor_values):
-        self.left, self.center, self.right = sensor_values
+    def interpret(self, sensor_bus):
+        #print("Interpreting sensor values")
+        self.left, self.center, self.right = sensor_bus 
+        #print("After read)")
         edge_left = abs(self.left - self.center)
         edge_right = abs(self.right - self.center)
 
+        #print("After math)")
         if self.polarity == 'dark':
             off_center = (edge_left - edge_right) / self.sensitivity
         else:
             off_center = (edge_right - edge_left) / self.sensitivity
 
+        #print("After math2)")
+
         # Clamp the off_center value between -1 and 1
         off_center = max(min(off_center, 1), -1)
 
-        print("Off center: ", off_center)
+        #print("Off center: ", off_center)
 
         return off_center
 
@@ -64,9 +69,11 @@ class Controller(object):
     def __init__(self, car):
         self.car = car
 
-    def control(self, offset):
+    def control(self, offset, ultraSonicDistance):
         # Define the steering angles for left, kinda left, center, kinda right, right
         steering_angles = [30, 15, 0, -15, -30]
+
+        print("Top of control")
 
         # Calculate the steering angle based on the offset
         if offset < -0.5:
@@ -103,7 +110,7 @@ readSensor = rr.Producer(sensor.read, bSensor_Interp, 0.001, bTerminate, "Read s
 
 # Wrap the multiplier function into a consumer-producer
 interpreter = Interpreter()
-interpSensor = rr.ConsumerProducer(interpreter.interpret, [bSensor_Interp, bUltraSonic_Interp], bInterp_Control, 0.01, bTerminate, "Interpret sensor values and write to control bus")
+interpSensor = rr.ConsumerProducer(interpreter.interpret, bSensor_Interp, bInterp_Control, 0.01, bTerminate, "Interpret sensor values and write to control bus")
 
 car = pixi.Picarx()
 
@@ -112,20 +119,20 @@ readUltraSonic = rr.Producer(ultraSonic.read, bUltraSonic_Interp, 0.001, bTermin
 #ultraSonicAvoidance = rr.Producer(ultraSonic.obsitcal_avoidance, bTerminate, 0.01, bTerminate, "UltraSonic avoidance")
 
 controller = Controller(car)
-controlPicarx = rr.ConsumerProducer(controller.control, [bInterp_Control, bUltraSonic_Interp], None, 0.1, bTerminate, "Control Picarx with interpreted values")
+controlPicarx = rr.Consumer(controller.control, [bInterp_Control, bUltraSonic_Interp], 0.1, bTerminate, "Control Picarx with interpreted values")
 
 """ Fourth Part: Create RossROS Printer and Timer objects """
 
 # Make a printer that returns the most recent wave and product values
-printBuses = rr.Printer([bSensor_Interp, bInterp_Control, bUltraSonic_Interp], 0.5, bTerminate, "Print raw and derived data", "Data bus readings are: ")
+printBuses = rr.Printer([bSensor_Interp, bInterp_Control, bUltraSonic_Interp], 0.1, bTerminate, "Print raw and derived data", "Data bus readings are: ")
 
 # Make a timer (a special kind of producer) that turns on the termination bus when it triggers
-terminationTimer = rr.Timer(bTerminate, 3, 0.1, bTerminate, "Termination timer")
+terminationTimer = rr.Timer(bTerminate, .5, 0.1, bTerminate, "Termination timer")
 
 """ Fifth Part: Concurrent execution """
 
 # Create a list of producer-consumers to execute concurrently
-producer_consumer_list = [readSensor, readUltraSonic, interpSensor, controlPicarx, ultraSonicAvoidance, printBuses, terminationTimer]
+producer_consumer_list = [readSensor, interpSensor, controlPicarx, readUltraSonic, printBuses, terminationTimer]
 
 # Execute the list of producer-consumers concurrently
 rr.runConcurrently(producer_consumer_list)
