@@ -93,6 +93,11 @@ class Controller(object):
 
         car.set_dir_servo_angle(steering_angle)
 
+        if ultraSonicDistance >= 10:
+            car.forward(25)
+        else:
+            car.backward(5)
+
 
         
 
