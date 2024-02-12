@@ -121,7 +121,7 @@ readUltraSonic = rr.Producer(ultraSonic.read, bUltraSonic_Interp, 0.001, bTermin
 #ultraSonicAvoidance = rr.Producer(ultraSonic.obsitcal_avoidance, bTerminate, 0.01, bTerminate, "UltraSonic avoidance")
 
 controller = Controller(car)
-controlPicarx = rr.Consumer(controller.control, [bInterp_Control, bUltraSonic_Interp], 0.1, bTerminate, "Control Picarx with interpreted values")
+controlPicarx = rr.Consumer(controller.control, (bInterp_Control, bUltraSonic_Interp), 0.1, bTerminate, "Control Picarx with interpreted values")
 
 """ Fourth Part: Create RossROS Printer and Timer objects """
 
